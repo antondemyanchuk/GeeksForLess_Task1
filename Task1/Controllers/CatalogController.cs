@@ -2,8 +2,6 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Task1.DAO;
 
 namespace Task1.Controllers
@@ -38,11 +36,13 @@ namespace Task1.Controllers
 
             return PhysicalFile(filePath, "application/json", WebUtility.UrlEncode(fileName));
         }
+
         [HttpGet]
         public IActionResult ImportNewCatalog()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult ImportNewCatalog([FromForm] IFormFile jsonFile)
         {
@@ -53,36 +53,18 @@ namespace Task1.Controllers
                     jsonFile.CopyTo(stream);
                     var json = Encoding.UTF8.GetString(stream.ToArray());
 
-                    var options = new JsonSerializerOptions
-                    {
-                        ReferenceHandler = ReferenceHandler.Preserve, // Сохранить ссылки
-                    };
+                    var catalogData = JsonSerializer.Deserialize<Catalog[]>(json);
 
-                    var catalogData = JsonSerializer.Deserialize<Catalog[]>(json, options);
-
-                    // Добавьте импортированные данные в базу данных
-                    foreach (var catalog in catalogData)
-                    {
-                        // Проверьте, существует ли родительский каталог
-                        if (catalog.ParentId.HasValue)
-                        {
-                            var parent = _context.Cataloges.FirstOrDefault(c => c.Id == catalog.ParentId);
-                            if (parent != null)
-                            {
-                                catalog.Parent = parent;
-                            }
-                        }
-                    }
-
+                    _context.Cataloges.RemoveRange(_context.Cataloges);
                     _context.Cataloges.AddRange(catalogData);
                     _context.SaveChanges();
 
-                    return RedirectToAction("Index", "Home"); // Перенаправьте на отображение структуры каталога
+                    return RedirectToAction("Index", "Home");
                 }
             }
-
             return BadRequest("No file selected.");
         }
+
         [HttpGet]
         public IActionResult Start()
         {
