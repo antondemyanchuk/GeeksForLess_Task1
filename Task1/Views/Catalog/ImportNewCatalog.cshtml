@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Import New Catalog from JSON";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="jsonFile">Select a JSON file to import as a new catalog:</label>
+        <input type="file" name="jsonFile" id="jsonFile" accept=".json" />
+    </div>
+    <button type="submit" class="btn btn-primary">Import New Catalog</button>
+</form>

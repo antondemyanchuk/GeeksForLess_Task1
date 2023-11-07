@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using Task1.DAO;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,10 @@ if (!application.Environment.IsDevelopment())
 {
     application.UseExceptionHandler("/Error");
 }
-else application.UseDeveloperExceptionPage();
+else
+{
+    application.UseDeveloperExceptionPage();
+}
 
 application.UseHsts();
 application.UseHttpsRedirection();

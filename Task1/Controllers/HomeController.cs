@@ -16,7 +16,7 @@ public class HomeController : Controller
             .FirstOrDefaultAsync(catalog => catalog.Id == currentFolderId);
         if (currentFolder == null)
             return NotFound();
-        ViewData["FolderName"] = $"''Folder'' - {currentFolder.Name}";
+        ViewData["FolderName"] = "''Folder'' - " + currentFolder.Name;
         var childFolders = await _context.Cataloges
             .Where(catalog => catalog.ParentId == currentFolderId)
             .ToListAsync();
